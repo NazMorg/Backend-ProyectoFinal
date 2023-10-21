@@ -1,70 +1,64 @@
-import fs from 'fs';
+import mongoose from 'mongoose';
+import BaseManager from './baseManager.js';
+import { cartsModel } from '../db/models/carts.model.js';
 
-class CartsManager {
-    constructor(path) {
-        this.path = path
+class CartsManager extends BaseManager {
+    constructor() {
+        super(cartsModel);
     }
-    async getCarts() {
-        try {
-            if (fs.existsSync(this.path)) {
-                const data = await fs.promises.readFile(this.path, 'utf-8');
-                const carts = JSON.parse(data);
-                return carts;
-            } else {
-                const carts = [];
-                await fs.promises.writeFile(this.path, JSON.stringify(carts))
-                return carts;
-            }
-        } catch (error) {
-            return error;
-        }
-    }
-    async addCart() {
-        try{
-            const carts = await this.getCarts();
-            let id, products;
-            if(!carts.length){
-                id = 1;
-                products = []; 
-            } else {
-                id = carts[carts.length - 1].id + 1;
-                products = [];
-            }
-            carts.push({id, products});
-            await fs.promises.writeFile(this.path, JSON.stringify(carts));
-        } catch (error) {
-            return error;
-        }
-    }
-    async getCartById(id) {
-        try {
-            const carts = await this.getCarts();
-            const cart = carts.find((c) => c.id === id);
-            return cart;
-        } catch (error) {
-            return error;
-        }
-    }
-    async addToCart(id, pid) {
-        try {
-            const carts = await this.getCarts();
-            let cart = await this.getCartById(+id);
 
-            const productIndex = cart.products.findIndex((product) => product.product === +pid);
-            if(productIndex === -1) {
-                cart.products.push({ product:+pid, quantity:1 });
-            } else {
-                cart.products[productIndex].quantity += 1;
-            }
-            
-            const cartIndex = carts.findIndex((cart) => cart.id === +id);
-            carts[cartIndex] = cart;
+    async findAndPopulate(cid) {
+        const cartFound = await cartsModel.findById(cid).populate({ path: "products.product" });
+        return cartFound;
+    }
 
-            await fs.promises.writeFile(this.path, JSON.stringify(carts));
-        } catch (error) {
-            return error;
+    async addToCart(cid, obj) {
+        const cartFound = await cartsModel.findById(cid);
+        if (!cartFound) {
+            console.log(`No se encontro el carrito: ${cid}`);
+        } else {
+            cartFound.products = [...cartFound.products, ...obj];
         }
+        cartFound.save();
+        return cartFound;
+    }
+
+    async deleteAllProducts(cid) {
+        const cartFound = await cartsModel.findById(cid);
+        if (!cartFound) {
+            console.log(`No se encontro el carrito: ${cid}`);
+        } else {
+            cartFound.products = [];
+        }
+        cartFound.save();
+        return cartFound;
+    }
+
+    async updateProductQuantity(cid, pid, quantity) {
+        const cartFound = await cartsModel.findById(cid);
+        const productFound = cartFound.products.find((product) => product.product.toString() === pid);
+
+        if (!productFound) {
+            console.log("No se encontro el producto");
+        }else{
+            productFound.quantity = quantity;
+        }
+        cartFound.save();
+        return cartFound;
+    }
+
+    async deleteOneProduct(cid, pid) {
+        const cartFound = await cartsModel.findById(cid);
+        const productFound = cartFound.products.find((product) => product.product.toString() === pid);
+
+        if (!productFound) {
+            console.log("No se encontro el producto");
+        }else{
+            cartFound.products = cartFound.products.filter((product) => product.product.toString() !== pid);
+        }
+        cartFound.save();
+        return cartFound;
     }
 }
 
-export const cartsManager = new CartsManager('carts.json');
+export const cartsManager = new CartsManager();
