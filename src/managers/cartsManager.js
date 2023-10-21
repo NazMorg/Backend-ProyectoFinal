@@ -8,7 +8,7 @@ class CartsManager extends BaseManager {
     }
 
     async findAndPopulate(cid) {
-        const cartFound = await cartsModel.findById(cid).populate({ path: "products.product" });
+        const cartFound = await cartsModel.findById(cid).populate("products.product").lean();
         return cartFound;
     }
 
@@ -17,7 +17,7 @@ class CartsManager extends BaseManager {
         if (!cartFound) {
             console.log(`No se encontro el carrito: ${cid}`);
         } else {
-            cartFound.products = [...cartFound.products, ...obj];
+            cartFound.products = [...cartFound.products, ...obj.products];
         }
         cartFound.save();
         return cartFound;

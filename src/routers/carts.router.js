@@ -29,8 +29,10 @@ router.get("/:cid", async (req, res) => {
 })
 
 router.post("/", async (req, res) => {
+    const { productId, quantity } = req.body;
+    const obj = { products: [ { product: productId, quantity: quantity }]};
     try {
-        const newCart = await cartsManager.createOne(req.body);
+        const newCart = await cartsManager.createOne(obj);
         if (!newCart) {
             res.status(400).json({ message: "No se pudo crear el carrito" });
         }

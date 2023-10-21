@@ -1,0 +1,12 @@
+<h2>Lista de Productos</h2>
+<div id="renderData">
+    {{#each products}}
+    <div>
+        <p>{{title}}</p>
+        <p>Precio: ${{price}}</p>
+    </div>
+    <div>
+        <button><a href="http://localhost:8080/products/{{_id}}">Ver Detalles</a></button>
+    </div>
+    {{/each}}
+</div>
