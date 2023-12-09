@@ -1,7 +1,7 @@
-import { productsModel } from '../db/models/products.model.js';
-import BaseManager from './baseManager.js';
+import BaseMongo from './base.mongo.js';
+import { productsModel } from '../models/products.model.js';
 
-class ProductsManager extends BaseManager {
+class ProductsMongo extends BaseMongo {
     constructor() {
         super(productsModel);
     }
@@ -13,4 +13,4 @@ class ProductsManager extends BaseManager {
     }
 }
 
-export const productsManager = new ProductsManager();
+export const productsMongo = new ProductsMongo();

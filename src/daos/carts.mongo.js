@@ -1,10 +1,9 @@
-import mongoose from 'mongoose';
-import BaseManager from './baseManager.js';
-import { cartsModel } from '../db/models/carts.model.js';
+import BaseMongo from './base.mongo.js';
+import { cartsModel } from '../models/carts.model.js';
 
-class CartsManager extends BaseManager {
+class CartsMongo extends BaseMongo {
     constructor() {
-        super(cartsModel);
+        super(cartsModel, "products.product");
     }
 
     async findAndPopulate(cid) {
@@ -15,7 +14,8 @@ class CartsManager extends BaseManager {
     async addToCart(cid, obj) {
         const cartFound = await cartsModel.findById(cid);
         if (!cartFound) {
-            console.log(`No se encontro el carrito: ${cid}`);
+            const cartFound = await cartsModel.create({ products: [] });
+            cartFound.products = [...cartFound.products, ...obj.products];
         } else {
             cartFound.products = [...cartFound.products, ...obj.products];
         }
@@ -61,4 +61,4 @@ class CartsManager extends BaseManager {
     }
 }
 
-export const cartsManager = new CartsManager();
+export const cartsMongo = new CartsMongo();
