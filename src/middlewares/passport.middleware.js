@@ -1,5 +1,6 @@
 import passport from 'passport';
 import { usersMongo } from '../daos/users.mongo.js';
+import { cartsMongo } from '../daos/carts.mongo.js';
 import { Strategy as LocalStrategy } from 'passport-local';
 import { Strategy as GithubStrategy } from 'passport-github2';
 import { hashData, compareData } from '../utils.js';
@@ -71,12 +72,14 @@ passport.use("github", new GithubStrategy(
                 //signup
                 const isAdmin = profile._json.email === config.adminuser_email && this.password === config.adminuser_pass ? true : false;
                 const role = isAdmin === true ? "admin" : "user";
+                const userCart = await cartsMongo.createOne({ products: [] });
                 const newUser = {
                     first_name: profile._json.name.split(" ")[0],
                     last_name: profile._json.name.split(" ")[1],
                     email: profile._json.email,
                     age: 18,
                     password: hashedPass,
+                    cart: userCart,
                     role: role,
                     from_github: true,
                 }

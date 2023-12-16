@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { cartsController } from '../controllers/carts.controller.js';
+import { checkUserRole } from '../middlewares/auth.middleware.js';
 
 const router = Router();
 
@@ -7,14 +8,14 @@ router.get("/", cartsController.findAllCarts)
 
 router.get("/:cid", cartsController.findCartAndPopulate)
 
-router.post("/", cartsController.createNewCart)
+router.post("/", checkUserRole("user"), cartsController.createNewCart)
 
-router.put("/:cid", cartsController.addProductToCart)
+router.put("/:cid", checkUserRole("user"), cartsController.addProductToCart)
 
-router.delete("/:cid", cartsController.emptyCart)
+router.delete("/:cid", checkUserRole("user"), cartsController.emptyCart)
 
-router.put("/:cid/products/:pid", cartsController.updateProductQuantity)
+router.put("/:cid/products/:pid", checkUserRole("user"), cartsController.updateProductQuantity)
 
-router.delete("/:cid/products/:pid", cartsController.deleteOneProduct)
+router.delete("/:cid/products/:pid", checkUserRole("user"), cartsController.deleteOneProduct)
 
 export default router;

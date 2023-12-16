@@ -38,8 +38,10 @@ class ViewsController {
     productDetailsRender = async (req, res) => {
         const productId = req.params.pid;
         const productFound = await productsService.findById(productId);
+        const userCart = req.user ? req.user.cart : req.session.cart;
+        const cartId = userCart._id;
         const { _id, title, description, price, stock, category } = productFound;
-        res.render('details', { _id, title, description, price, stock, category });
+        res.render('details', { _id, title, description, price, stock, category, cartId });
     }
 }
 

@@ -17,7 +17,10 @@ class UsersService {
     async createOne(obj) {
         const { email, password } = obj;
         const hashedPass = await hashData(password);
-        const response = await usersMongo.createOne({ ...obj, password: hashedPass });
+        const isAdmin = email === config.adminuser_email && password === config.adminuser_pass ? true : false;
+        const role = isAdmin === true ? "admin" : "user";
+        const userCart = await cartsMongo.createOne({ products: [] });
+        const response = await usersMongo.createOne({ ...obj, password: hashedPass, cart: userCart, role: role });
         return response;
     }
 

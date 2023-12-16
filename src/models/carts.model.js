@@ -14,6 +14,10 @@ const cartsSchema = new mongoose.Schema({
             }
         ],
         _id: false,
+    },
+    status: {
+        type: String,
+        default: "open",
     }
 })
 

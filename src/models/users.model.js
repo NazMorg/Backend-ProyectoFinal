@@ -23,17 +23,26 @@ const usersSchema = new Schema({
         type: String,
         required: true,
     },
-    cart:{
+    cart: {
         type: mongoose.SchemaTypes.ObjectId,
         ref: "Carts",
     },
-    role:{
+    role: {
         type: String,
         default: "user",
     },
     from_github: {
         type: Boolean,
         default: false,
+    },
+    purchases: {
+        type: [{
+            cart: {
+                type: mongoose.SchemaTypes.ObjectId,
+                ref: "Carts"
+            },
+        }],
+        _id: false,
     },
 })
 
