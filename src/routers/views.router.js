@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { viewsController } from '../controllers/views.controller.js';
+import { checkUserRole } from '../middlewares/auth.middleware.js';
 
 const router = Router();
 
@@ -16,5 +17,11 @@ router.get("/products", viewsController.productsRender)
 router.get("/carts/:cid", viewsController.populatedCartRender)
 
 router.get("/products/:pid", viewsController.productDetailsRender)
+
+router.get("/createproduct", checkUserRole("admin"), viewsController.createProductRender)
+
+router.get("/updateproduct", checkUserRole("admin"), viewsController.updateProductRender)
+
+router.get("/deleteproduct", checkUserRole("admin"), viewsController.deleteProductRender)
 
 export default router;

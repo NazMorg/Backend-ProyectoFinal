@@ -22,9 +22,8 @@ class ProductsService {
         return response;
     }
 
-    async updateOne(obj) {
-        const { id, ...productData } = obj; //REVISAR
-        const response = await productsMongo.updateOne(id, productData); //REVISAR
+    async updateOne(id, obj) {
+        const response = await productsMongo.updateOne(id, obj);
         return response;
     }
 

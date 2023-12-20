@@ -5,6 +5,7 @@ const userCart = document.getElementById('cartId').value;
 
 
 addToCartForm.onsubmit = async (e) => {
+    e.preventDefault();
     
     if (quantity.value >= 1) {
         const productData = { products: [{ product: productId, quantity: +quantity.value }] }
@@ -13,7 +14,6 @@ addToCartForm.onsubmit = async (e) => {
         alert("La cantidad debe ser 1 o mayor");
     }
 
-    e.preventDefault();
 }
 
 async function addToCart(userCart, productData) {

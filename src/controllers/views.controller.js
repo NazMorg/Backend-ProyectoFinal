@@ -21,11 +21,13 @@ class ViewsController {
     productsRender = async (req, res) => {
         const products = await productsService.findAll();
         if (req.user) {
-            const { first_name, last_name, role } = req.user;
-            res.render('products', { products, first_name, last_name, role });
+            const { first_name, last_name, role, cart } = req.user;
+            const cartId = cart._id;
+            res.render('products', { products, first_name, last_name, role, cartId });
         } else {
-            const { first_name, last_name, role } = req.session;
-            res.render('products', { products, first_name, last_name, role });
+            const { first_name, last_name, role, cart } = req.session;
+            const cartId = cart._id;
+            res.render('products', { products, first_name, last_name, role, cartId });
         }
     }
 
@@ -43,6 +45,19 @@ class ViewsController {
         const { _id, title, description, price, stock, category } = productFound;
         res.render('details', { _id, title, description, price, stock, category, cartId });
     }
+
+    createProductRender = (req, res) => {
+        res.render('createProduct'); 
+    }
+
+    updateProductRender = (req, res) => {
+        res.render('updateProduct'); 
+    }
+
+    deleteProductRender = (req, res) => {
+        res.render('deleteProduct'); 
+    }
+
 }
 
 export const viewsController = new ViewsController();
